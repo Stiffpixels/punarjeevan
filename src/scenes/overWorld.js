@@ -2,6 +2,7 @@ import fetchMapData, {
   drawTiles,
   colorizeBackground,
   drawBoundaries,
+  renderDialogue,
 } from "../utils.js";
 import generatePlayerComponent, { setPlayerStates } from "../entities/plato.js";
 import slimeComponent, { setSlimeAI } from "../entities/slime.js";
@@ -38,6 +39,12 @@ const overWorld = async (k) => {
     }
     drawTiles(k, map, layer, mapData.tilewidth, mapData.tileheight);
   }
+  map.add([
+    k.sprite("assets", { anim: "maya-right-idle" }),
+    k.pos(entities.player.pos.x - 300, entities.player.pos.y + 50),
+    k.area({ shape: new k.Rect(k.vec2(3, 3), 10, 12) }),
+    k.body({ isStatic: true }),
+  ]);
   k.camScale(3);
   k.camPos(entities.player.worldPos());
 
@@ -45,13 +52,39 @@ const overWorld = async (k) => {
     setSlimeAI(k, slime);
   }
 
-  k.onUpdate(() => {
-    if (entities.player.pos.x < 528) {
+  const wakeUpLines = [
+    "wha.. where is this place, am I in heaven?[press space to continue]",
+    "In anycase I must look around to find out myself",
+  ];
+  const convoWithMayaLines = [
+    "Lady: Hey! you what are you doing in these parts? Don't you know this area is restricted and dangerous for common folk?",
+    "Plato: I don't know myself I've never been to this place either, I just woke up here near that house.",
+    "Lady: How can that be possible? Anyways come with me thats my father's house its too dangerous to talk here.",
+    "Plato: Sure I don't perticularly want to get eaten by slime monsters.",
+  ];
+
+  renderDialogue(k, wakeUpLines, { x: 624, y: 288 }, entities.player);
+
+  const convoWithMaya = async () => {
+    renderDialogue(
+      k,
+      convoWithMayaLines,
+      {
+        x: entities.player.worldPos().x - 160,
+        y: entities.player.worldPos().y + 90,
+      },
+      entities.player
+    );
+  };
+
+  const checkPlayerPos = k.onUpdate(async () => {
+    if (entities.player.pos.x < 528 && entities.player.prevScene === "") {
       entities.player.frozen = true;
-      // for (const slime in entities.slimes) {
-      //   slime.stop();
-      // }
+      await convoWithMaya();
+      checkPlayerPos.cancel();
     }
+  });
+  k.onUpdate(() => {
     if (entities.player.pos.dist(k.camPos()) && !entities.player.frozen) {
       k.tween(
         k.camPos(),

@@ -17,6 +17,7 @@ const generatePlayerComponent = (k, pos) => {
       attackPower: 1,
       frozen: false,
       isSwordEquipped: false,
+      prevScene: "",
     },
     "plato",
   ];

@@ -79,8 +79,41 @@ export const blinkEffect = async (k, entity) => {
   );
 };
 
+export const renderDialogue = (k, lines, pos, player = null) => {
+  const dialogueBox = k.add([
+    k.rect(1000, 115),
+    k.pos(140, k.center().y + 240),
+    k.fixed(),
+  ]);
+  let linesIndex = 0;
+  const { x, y } = pos;
+  const dialogueText = k.add([
+    k.text(lines[linesIndex], {
+      size: 10,
+      width: 320,
+      font: "sans-serif",
+    }),
+    k.color(20, 16, 19),
+    k.pos(x, y),
+  ]);
+  console.log(dialogueText.text);
+
+  if (player) player.frozen = true;
+  const dialogueKeyBind = k.onKeyPress("space", () => {
+    if (linesIndex === lines.length - 1) {
+      dialogueKeyBind.cancel();
+      dialogueBox.destroy();
+      dialogueText.destroy();
+      if (player) player.frozen = false;
+    } else {
+      linesIndex++;
+      dialogueText.text = lines[linesIndex];
+    }
+  });
+};
+
 export const onAttacked = async (k, attacker, entity) => {
-  if (entity.isAttacking) return;
+  if (entity.isAttacking || entity?.frozen) return;
   entity.hurt(attacker.attackPower);
   blinkEffect(k, entity);
   if (entity.hp() <= 0) {

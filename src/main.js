@@ -1,5 +1,6 @@
 import k from "./kaboomContext.js";
 import overWorld from "./scenes/overWorld.js";
+import prologue from "./scenes/prologue.js";
 k.loadSprite("assets", "./assets/punarjeevan.png", {
   sliceX: 31,
   sliceY: 31,
@@ -17,6 +18,18 @@ k.loadSprite("assets", "./assets/punarjeevan.png", {
     "slime-move-horizontal": { from: 249, to: 252, loop: true },
     "slime-move-down": { from: 279, to: 282, loop: true },
     "slime-move-up": { from: 310, to: 313, loop: true },
+    "maya-right-idle": 42,
+  },
+});
+
+k.loadSprite("cityCutscene", "./assets/cityScene1Anim.png", {
+  sliceX: 6,
+  sliceY: 2,
+  anims: {
+    "city-scene-idle": 0,
+    "city-scene-end": 11,
+    "city-scene1": { from: 0, to: 4 },
+    "city-scene2": { from: 6, to: 11 },
   },
 });
 
@@ -69,6 +82,7 @@ k.loadSpriteAtlas("./assets/punarjeevan.png", {
 
 const scenes = {
   overWorld,
+  prologue,
 };
 
 for (const sceneName in scenes) {
