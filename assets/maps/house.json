@@ -130,7 +130,7 @@
          "name":"objectBounds",
          "objects":[
                 {
-                 "height":32,
+                 "height":28.9999999999999,
                  "id":1,
                  "name":"",
                  "rotation":0,
@@ -163,7 +163,7 @@
                  "y":358.818182272727
                 }, 
                 {
-                 "height":13.90909,
+                 "height":6.72727181818181,
                  "id":6,
                  "name":"",
                  "rotation":0,
@@ -171,10 +171,10 @@
                  "visible":true,
                  "width":11.7273,
                  "x":466.045440909091,
-                 "y":400.909091363636
+                 "y":408.090909545454
                 }, 
                 {
-                 "height":16,
+                 "height":11.25,
                  "id":7,
                  "name":"",
                  "rotation":0,
@@ -185,7 +185,7 @@
                  "y":320
                 }, 
                 {
-                 "height":10,
+                 "height":8.125,
                  "id":8,
                  "name":"",
                  "rotation":0,
@@ -196,7 +196,7 @@
                  "y":336.875
                 }, 
                 {
-                 "height":16,
+                 "height":12.5,
                  "id":9,
                  "name":"houseExit",
                  "rotation":0,
@@ -204,6 +204,50 @@
                  "visible":true,
                  "width":16,
                  "x":399.875,
+                 "y":451.5
+                }, 
+                {
+                 "height":116.5,
+                 "id":13,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":288,
+                 "y":331.5
+                }, 
+                {
+                 "height":116.75,
+                 "id":14,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":512,
+                 "y":331.25
+                }, 
+                {
+                 "height":16,
+                 "id":15,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":96,
+                 "x":416,
+                 "y":448
+                }, 
+                {
+                 "height":16,
+                 "id":16,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":96,
+                 "x":304,
                  "y":448
                 }],
          "opacity":1,
@@ -215,31 +259,43 @@
         {
          "draworder":"topdown",
          "id":5,
-         "name":"SpawnObjects",
+         "name":"spawnPoints",
          "objects":[
                 {
                  "height":0,
                  "id":10,
-                 "name":"Ash",
+                 "name":"maya",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":415.818181818182,
-                 "y":384.181818181818
+                 "x":450.568181818182,
+                 "y":411.681818181818
                 }, 
                 {
                  "height":0,
                  "id":11,
-                 "name":"Jamie",
+                 "name":"jamie",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":466.545454545455,
-                 "y":363.818181818182
+                 "x":368.045454545455,
+                 "y":346.318181818182
+                }, 
+                {
+                 "height":0,
+                 "id":12,
+                 "name":"player",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":400.25,
+                 "y":448
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -248,7 +304,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":12,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

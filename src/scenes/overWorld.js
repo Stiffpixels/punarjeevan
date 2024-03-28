@@ -39,12 +39,13 @@ const overWorld = async (k) => {
     }
     drawTiles(k, map, layer, mapData.tilewidth, mapData.tileheight);
   }
-  map.add([
-    k.sprite("assets", { anim: "maya-right-idle" }),
-    k.pos(entities.player.pos.x - 300, entities.player.pos.y + 50),
-    k.area({ shape: new k.Rect(k.vec2(3, 3), 10, 12) }),
-    k.body({ isStatic: true }),
-  ]);
+  if (!entities.player.isSwordEquipped)
+    map.add([
+      k.sprite("assets", { anim: "maya-right-idle" }),
+      k.pos(entities.player.pos.x - 300, entities.player.pos.y + 50),
+      k.area({ shape: new k.Rect(k.vec2(3, 3), 10, 12) }),
+      k.body({ isStatic: true }),
+    ]);
   k.camScale(3);
   k.camPos(entities.player.worldPos());
 
@@ -62,8 +63,9 @@ const overWorld = async (k) => {
     "Lady: How can that be possible? Anyways come with me thats my father's house its too dangerous to talk here.",
     "Plato: Sure I don't perticularly want to get eaten by slime monsters.",
   ];
-
-  renderDialogue(k, wakeUpLines, { x: 624, y: 288 }, entities.player);
+  if (!entities.player.isSwordEquipped) {
+    renderDialogue(k, wakeUpLines, { x: 624, y: 288 }, entities.player);
+  }
 
   const convoWithMaya = async () => {
     renderDialogue(
@@ -75,8 +77,16 @@ const overWorld = async (k) => {
       },
       entities.player
     );
+    const trackSpaceCount = k.onKeyPress("space", () => {
+      convoWithMayaCount++;
+      if (convoWithMayaCount === convoWithMayaLines.length) {
+        trackSpaceCount.cancel();
+        k.go("house");
+      }
+    });
   };
 
+  let convoWithMayaCount = 1;
   const checkPlayerPos = k.onUpdate(async () => {
     if (entities.player.pos.x < 528 && entities.player.prevScene === "") {
       entities.player.frozen = true;
@@ -84,6 +94,7 @@ const overWorld = async (k) => {
       checkPlayerPos.cancel();
     }
   });
+
   k.onUpdate(() => {
     if (entities.player.pos.dist(k.camPos()) && !entities.player.frozen) {
       k.tween(

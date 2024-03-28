@@ -79,7 +79,7 @@ export const blinkEffect = async (k, entity) => {
   );
 };
 
-export const renderDialogue = (k, lines, pos, player = null) => {
+export const renderDialogue = (k, lines, pos, player = null, fontSize = 10) => {
   const dialogueBox = k.add([
     k.rect(1000, 115),
     k.pos(140, k.center().y + 240),
@@ -89,7 +89,7 @@ export const renderDialogue = (k, lines, pos, player = null) => {
   const { x, y } = pos;
   const dialogueText = k.add([
     k.text(lines[linesIndex], {
-      size: 10,
+      size: fontSize,
       width: 320,
       font: "sans-serif",
     }),
