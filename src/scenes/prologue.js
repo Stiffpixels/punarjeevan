@@ -28,7 +28,7 @@ export default function prologue(k) {
 
   const endingSceneSequence = k.onKeyPress("space", async () => {
     countOfSpaceClicks++;
-    if (countOfSpaceClicks === prologueLines.length - 1) {
+    if (countOfSpaceClicks === prologueLines.length) {
       await k.wait(1);
       playAnimIfNotPlaying(scene, "city-scene2");
       await k.wait(0.5);

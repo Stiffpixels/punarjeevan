@@ -1,4 +1,10 @@
-import { blinkEffect, onAttacked, playAnimIfNotPlaying } from "../utils.js";
+import { playerStates } from "../states/stateManager.js";
+import {
+  blinkEffect,
+  onAttacked,
+  playAnimIfNotPlaying,
+  renderHealthbar,
+} from "../utils.js";
 
 const generatePlayerComponent = (k, pos) => {
   return [
@@ -16,8 +22,6 @@ const generatePlayerComponent = (k, pos) => {
       direction: "down",
       attackPower: 1,
       frozen: false,
-      isSwordEquipped: false,
-      prevScene: "",
     },
     "plato",
   ];
@@ -28,7 +32,7 @@ export const setPlayerStates = (k, player, map) => {
     if (
       player.state !== "attacking" &&
       player.frozen !== true &&
-      player.isSwordEquipped
+      playerStates.swordEquipped
     )
       player.enterState("attacking", map, player);
   });
@@ -49,6 +53,15 @@ export const setPlayerStates = (k, player, map) => {
 
   player.onCollide("slime", (slime) => {
     player.enterState("gettingAttacked", slime);
+  });
+  player.onCollide("skeleton-attack", () => {
+    player.enterState("gettingAttacked", { attackPower: 1 });
+  });
+  player.onCollide("fire-ball", () => {
+    player.enterState("gettingAttacked", { attackPower: 2 });
+  });
+  player.onCollide("demonKing-attack", () => {
+    player.enterState("gettingAttacked", { attackPower: 2 });
   });
 
   player.onStateEnter("idle", () => {
@@ -181,7 +194,16 @@ export const setPlayerStates = (k, player, map) => {
     playerAttack.onCollide("slime", (slime) => {
       onAttacked(k, player, slime);
     });
-    await k.wait(0.32, () => {
+    playerAttack.onCollide("skeleton", (skeleton) => {
+      onAttacked(k, player, skeleton);
+    });
+    playerAttack.onCollide("mage", (mage) => {
+      onAttacked(k, player, mage);
+    });
+    playerAttack.onCollide("demonKing", (demonKing) => {
+      onAttacked(k, player, demonKing);
+    });
+    await k.wait(0.5, () => {
       player.opacity = 1;
       k.destroy(playerAttack);
     });
@@ -194,8 +216,11 @@ export const setPlayerStates = (k, player, map) => {
     player.hurt(entity.attackPower);
     blinkEffect(k, player);
     await k.wait(0.1);
+    k.destroyAll("player-heart");
+    renderHealthbar(k, "player-heart", k.vec2(20, 20), player);
     if (player.hp() <= 0) {
-      k.go("overWorld");
+      playerStates.setDemonDefeated = false;
+      k.go("gameOver");
     }
   });
 };

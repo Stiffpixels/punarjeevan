@@ -3,15 +3,18 @@ import fetchMapData, {
   colorizeBackground,
   drawBoundaries,
   renderDialogue,
+  renderHealthbar,
 } from "../utils.js";
 import generatePlayerComponent, { setPlayerStates } from "../entities/plato.js";
 import slimeComponent, { setSlimeAI } from "../entities/slime.js";
+import { playerStates } from "../states/stateManager.js";
+import getMageComponent, { setMageAI } from "../entities/mage.js";
 
 const overWorld = async (k) => {
   colorizeBackground(k, 20, 16, 19);
   const mapData = await fetchMapData("./assets/maps/overworld.json");
   const map = k.add([k.pos(0, 0)]);
-  const entities = { player: null, slimes: [] };
+  const entities = { player: null, slimes: [], mage: null };
   for (const layer of mapData.layers) {
     if (layer.name === "ObjectBounds") {
       drawBoundaries(k, map, layer);
@@ -23,12 +26,18 @@ const overWorld = async (k) => {
           entities.player = map.add(
             generatePlayerComponent(k, k.vec2(object.x, object.y))
           );
+          entities.player.hurt(playerStates.getPlayerDamage);
           setPlayerStates(k, entities.player, map);
+          renderHealthbar(k, "player-heart", k.vec2(20, 20), entities.player);
         }
-        if (object.name === "slime") {
+        if (object.name === "slime" && playerStates.swordEquipped) {
           entities.slimes.push(
             map.add(slimeComponent(k, k.vec2(object.x, object.y)))
           );
+        }
+        if (object.name === "mage") {
+          entities.mage = map.add(getMageComponent(k, [object.x, object.y]));
+          setMageAI(k, entities.mage, entities.player);
         }
       }
       continue;
@@ -39,7 +48,7 @@ const overWorld = async (k) => {
     }
     drawTiles(k, map, layer, mapData.tilewidth, mapData.tileheight);
   }
-  if (!entities.player.isSwordEquipped)
+  if (!playerStates.swordEquipped)
     map.add([
       k.sprite("assets", { anim: "maya-right-idle" }),
       k.pos(entities.player.pos.x - 300, entities.player.pos.y + 50),
@@ -63,8 +72,8 @@ const overWorld = async (k) => {
     "Lady: How can that be possible? Anyways come with me thats my father's house its too dangerous to talk here.",
     "Plato: Sure I don't perticularly want to get eaten by slime monsters.",
   ];
-  if (!entities.player.isSwordEquipped) {
-    renderDialogue(k, wakeUpLines, { x: 624, y: 288 }, entities.player);
+  if (!playerStates.swordEquipped) {
+    renderDialogue(k, wakeUpLines, { x: 624, y: 295 }, entities.player);
   }
 
   const convoWithMaya = async () => {
@@ -88,11 +97,50 @@ const overWorld = async (k) => {
 
   let convoWithMayaCount = 1;
   const checkPlayerPos = k.onUpdate(async () => {
-    if (entities.player.pos.x < 528 && entities.player.prevScene === "") {
+    if (entities.player.pos.x < 528 && !playerStates.swordEquipped) {
       entities.player.frozen = true;
       await convoWithMaya();
       checkPlayerPos.cancel();
     }
+  });
+
+  entities.player.onCollide("houseEntrance", () => {
+    if (playerStates.swordEquipped) {
+      playerStates.setPlayerDamage = 5 - entities.player.hp();
+      k.go("house");
+      return;
+    }
+    renderDialogue(
+      k,
+      ["You knock on the door.......no response."],
+      {
+        x: 624,
+        y: 288,
+      },
+      entities.player
+    );
+  });
+
+  entities.player.onCollide("mage-gate", (mageGate) => {
+    if (playerStates.getMageDefeated) {
+      mageGate.unuse("body");
+      mageGate.unuse("area");
+      return;
+    }
+    renderDialogue(
+      k,
+      ["Defeat the mage first!"],
+      {
+        x: entities.player.worldPos().x - 160,
+        y: entities.player.worldPos().y + 90,
+      },
+      entities.player
+    );
+  });
+
+  entities.player.onCollide("dungeonEntrance", () => {
+    playerStates.setPlayerDamage = 5 - entities.player.hp();
+    k.go("dungeon");
   });
 
   k.onUpdate(() => {

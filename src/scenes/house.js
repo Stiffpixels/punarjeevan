@@ -1,4 +1,5 @@
 import generatePlayerComponent, { setPlayerStates } from "../entities/plato.js";
+import { playerStates } from "../states/stateManager.js";
 import fetchMapData, {
   colorizeBackground,
   drawBoundaries,
@@ -11,7 +12,11 @@ const house = async (k) => {
   colorizeBackground(k, 20, 16, 19);
   const mapData = await fetchMapData("./assets/maps/house.json");
   const map = k.add([k.pos(0, 0)]);
-  const entities = { player: null, jamie: null, maya: null };
+  const entities = {
+    player: null,
+    jamie: null,
+    maya: null,
+  };
   const mayaLines1 = [
     "Welcome, I live here with my dad. ",
     "Please go talk with him, he might know a solution for your situation.[press space]",
@@ -19,9 +24,9 @@ const house = async (k) => {
 
   const jamieLines1 = [
     "Greetings, outsider my name is Jamie and I live as I am on a mission from the kingdom.",
-    "I was exiled but there is still hope for you.",
+    "I was defeated but there is still hope for you.",
     "Take this sword and head south into the dungeon.",
-    "We are also trap here as a very evil presence has made the dungeon its home.",
+    "We are also trapped here as a very evil presence has made the dungeon its home.",
     "Defeat the evil and you can live a happy life in the kingdom.",
     "Also, press the left mouse button to use the sword.",
   ];
@@ -29,6 +34,12 @@ const house = async (k) => {
     if (layer.name === "spawnPoints") {
       for (const object of layer.objects) {
         if (object.name === "player") {
+          if (entities.player !== null) {
+            map.add(entities.player);
+
+            continue;
+          }
+
           entities.player = map.add(
             generatePlayerComponent(k, k.vec2(object.x, object.y))
           );
@@ -64,7 +75,10 @@ const house = async (k) => {
     drawTiles(k, map, layer, mapData.tilewidth, mapData.tileheight);
   }
   entities.player.onCollide("houseExit", () => {
-    k.go("overWorld");
+    if (playerStates.swordEquipped) {
+      playerStates.prevScene = "house";
+      k.go("overWorld");
+    }
   });
   setPlayerStates(k, entities.player, map);
 
@@ -75,7 +89,7 @@ const house = async (k) => {
       entities.maya.flipX = true;
       playAnimIfNotPlaying(entities.maya, "maya-right-idle");
     }
-    if (entities.player.isSwordEquipped) {
+    if (playerStates.swordEquipped) {
       renderDialogue(
         k,
         [
@@ -101,7 +115,7 @@ const house = async (k) => {
     if (entities.player.direction === "left") {
       playAnimIfNotPlaying(entities.jamie, "jamie-idle-right");
     }
-    if (entities.player.isSwordEquipped) {
+    if (playerStates.swordEquipped) {
       renderDialogue(
         k,
         [
@@ -121,7 +135,7 @@ const house = async (k) => {
       entities.player,
       6
     );
-    entities.player.isSwordEquipped = true;
+    playerStates.swordEquipped = true;
   });
 
   k.camPos(k.vec2(k.center().x - 238, k.center().y + 40));
