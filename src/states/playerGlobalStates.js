@@ -1,7 +1,7 @@
 const getPlayerStates = () => {
   let instance = null;
   const playerStates = () => {
-    let isSwordEquipped = true;
+    let isSwordEquipped = false;
     let prevScene = "";
     let mageDefeated = false;
     let playerDamage = 0;
