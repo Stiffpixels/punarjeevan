@@ -220,6 +220,7 @@ export const setPlayerStates = (k, player, map) => {
     renderHealthbar(k, "player-heart", k.vec2(20, 20), player);
     if (player.hp() <= 0) {
       playerStates.setDemonDefeated = false;
+      playerStates.setMageDefeated = false;
       k.go("gameOver");
     }
   });

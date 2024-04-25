@@ -14,7 +14,7 @@ export default function prologue(k) {
   ]);
 
   const prologueLines = [
-    "Man I am such a failure, just got fired off of my 10th job, did'nt even make any new friends at the new office.[Press SPACE to continue]",
+    "Man I am such a failure, just got fired off of my 10th job, didn't even make any new friends at the new office.[Press SPACE to continue]",
     "Even my old friends contact me rarely now, where did I go wrong.",
     "Whatever, Lets just drink the night away",
     "Thats if I can cross this road first kinda feel dizzy maybe drank too much.",
